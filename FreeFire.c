@@ -3,68 +3,86 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-// Código da Ilha – Edição Free Fire
-// Nível: Mestre
-// Este programa simula o gerenciamento avançado de uma mochila com componentes coletados durante a fuga de uma ilha.
-// Ele introduz ordenação com critérios e busca binária para otimizar a gestão dos recursos.
+// Constantes globais
+#define MAX_TERRITORIOS 5
+#define TAM_NOME 30
+#define TAM_COR 10
 
+// Estrutura de dados
+struct Territorio {
+    char nome[TAM_NOME];
+    char cor[TAM_COR];
+    int tropas;
+};
+
+// Protótipos das funções
+struct Territorio* alocarMapa();
+void inicializarTerritorios(struct Territorio* mapa);
+void exibirMapa(const struct Territorio* mapa);
+void liberarMemoria(struct Territorio* mapa);
+void limparBufferEntrada();
+
+// Função principal
 int main() {
-    // Menu principal com opções:
-    // 1. Adicionar um item
-    // 2. Remover um item
-    // 3. Listar todos os itens
-    // 4. Ordenar os itens por critério (nome, tipo, prioridade)
-    // 5. Realizar busca binária por nome
-    // 0. Sair
+    struct Territorio* mapa = alocarMapa(); 
+    if (mapa == NULL) {
+        printf("Errro ao alocar memória!\n");
+        return 1;
+    }
 
-    // A estrutura switch trata cada opção chamando a função correspondente.
-    // A ordenação e busca binária exigem que os dados estejam bem organizados.
+    inicializarTerritorios(mapa);
+    exibirMapa(mapa);
+    liberarMemoria(mapa);
 
     return 0;
 }
 
-// Struct Item:
-// Representa um componente com nome, tipo, quantidade e prioridade (1 a 5).
-// A prioridade indica a importância do item na montagem do plano de fuga.
+// Implementação de funções
 
-// Enum CriterioOrdenacao:
-// Define os critérios possíveis para a ordenação dos itens (nome, tipo ou prioridade).
+struct Territorio* alocarMapa() {
+    struct Territorio* mapa = (struct Territorio*) calloc(MAX_TERRITORIOS, sizeof(struct Territorio));
+    return mapa;
+}
 
-// Vetor mochila:
-// Armazena até 10 itens coletados.
-// Variáveis de controle: numItens (quantidade atual), comparacoes (análise de desempenho), ordenadaPorNome (para controle da busca binária).
+void inicializarTerritorios(struct Territorio* mapa) {
+    printf("=== Cadastro de territórios ===\n");
 
-// limparTela():
-// Simula a limpeza da tela imprimindo várias linhas em branco.
+    for (int i = 0; i <MAX_TERRITORIOS; i++) {
+        printf("Território %d: \n", i + 1);
 
-// exibirMenu():
-// Apresenta o menu principal ao jogador, com destaque para status da ordenação.
+        printf("Digite o nome: ");
+        fgets(mapa[i].nome, TAM_NOME, stdin);
+        mapa[i].nome[strcspn(mapa[i].nome, "\n")] = '\0';
 
-// inserirItem():
-// Adiciona um novo componente à mochila se houver espaço.
-// Solicita nome, tipo, quantidade e prioridade.
-// Após inserir, marca a mochila como "não ordenada por nome".
+        printf("Digite a cor do exército: ");
+        fgets(mapa[i].cor, TAM_COR, stdin);
+        mapa[i].cor[strcspn(mapa[i].cor, "\n")] = '\0';
 
-// removerItem():
-// Permite remover um componente da mochila pelo nome.
-// Se encontrado, reorganiza o vetor para preencher a lacuna.
+        printf("Digite a quantidade de tropas: ");
+        scanf("%d", &mapa[i].tropas);
+        limparBufferEntrada();
 
-// listarItens():
-// Exibe uma tabela formatada com todos os componentes presentes na mochila.
+        printf("\n");
+    }
+}
 
-// menuDeOrdenacao():
-// Permite ao jogador escolher como deseja ordenar os itens.
-// Utiliza a função insertionSort() com o critério selecionado.
-// Exibe a quantidade de comparações feitas (análise de desempenho).
+void exibirMapa(const struct Territorio* mapa) {
+    printf("\n=== Territórios cadastrados ===\n\n");
 
-// insertionSort():
-// Implementação do algoritmo de ordenação por inserção.
-// Funciona com diferentes critérios de ordenação:
-// - Por nome (ordem alfabética)
-// - Por tipo (ordem alfabética)
-// - Por prioridade (da mais alta para a mais baixa)
+    for (int i = 0; i < MAX_TERRITORIOS; i++) {
+        printf("Território %d: \n", i + 1);
+        printf("Nome: %s\n", mapa [i].nome);
+        printf("Cor do exército: %s\n", mapa[i].cor);
+        printf("Tropas: %d\n", mapa[i].tropas);
+        printf("-----------------\n");
+    }
+}
 
-// buscaBinariaPorNome():
-// Realiza busca binária por nome, desde que a mochila esteja ordenada por nome.
-// Se encontrar, exibe os dados do item buscado.
-// Caso contrário, informa que não encontrou o item.
+void liberarMemoria(struct Territorio* mapa) {
+    free(mapa);
+}
+
+void limparBufferEntrada() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
